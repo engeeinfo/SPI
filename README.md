@@ -9,6 +9,7 @@ data=8;
 counter=4; 
 countval=8; 
 buffer=8;
+here instead of c_enable and m_enable spe reg are used;
 
 On Fpga spi tested videos link
 
