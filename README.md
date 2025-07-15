@@ -1,23 +1,141 @@
-# SPI
-this spi code for 32 bit ; 
-if you want to change it to 8 bit,
- than change the parameter value; 
-these are as follows;
- for all module; 
-data=8;
- address=3; 
-counter=4; 
-countval=8; 
-buffer=8;
-here instead of c_enable and m_enable spe reg are used;
+# SPI Real-World Protocol Interface
 
-On Fpga spi tested videos link
+## 📦 Project Overview
 
-Introduction 
-https://1drv.ms/v/s!An_wDAIxFSnErC-NKmMsYHEP8d7s
+This project implements a **Verilog-based SPI Master Interface** designed to work in real-world embedded systems with baud rate configuration, CPOL/CPHA control, and APB compatibility.
 
-Read operation 
-https://1drv.ms/v/s!An_wDAIxFSnErC6mHV7AN0Iom1q0
+It consists of the following modules:
 
-Write operation 
-https://1drv.ms/v/s!An_wDAIxFSnErDDa2JN0CMva-oFM
+- `spi_top`: Top-level module integrating APB Slave, SPI Controller, SPI Master, and Clock Divider.
+- `spi_master`: Handles full-duplex SPI data transmission.
+- `SPI_Controller`: Controls the SPI state machine for master/slave coordination.
+- `APB_Slave`: Connects SPI with APB protocol interface.
+- `clkdiv`: Divides peripheral clock to match baud rate requirements.
+- `spi_rom`: Sample ROM for slave-side testing.
+
+---
+
+## 🧩 Block Diagram
+
+```
+ +-----------------+       +----------------+       +---------------+
+ |   APB_Slave     | <---> | SPI_Controller | <---> |   spi_master  |
+ |-----------------|       |----------------|       |---------------|
+ |  APB Interface  |       |  SPI Logic     |       | SPI Signals   |
+ +--------+--------+       +--------+-------+       +-------+-------+
+          |                         |                       |
+          |                         |                       |
+          V                         V                       V
+     [PADDR, PWDATA]         [Control Logic]        [MOSI, SCLK, SSx]
+                              ^                \
+                              |                 +--> ROM / Real Device
+                         [Baud Clock]
+                              ^
+                              |
+                        +-----+-----+
+                        |   clkdiv  |
+                        +-----------+
+```
+
+---
+
+## ⚙️ Features
+
+- ✅ Fully synthesizable SPI Master with programmable clock divider
+- ✅ Supports **CPOL** and **CPHA** configuration
+- ✅ Works with **APB-compliant systems** for configuration
+- ✅ Full **duplex transmission** using MOSI and MISO
+- ✅ Modular and extensible design for any SPI slave
+- ✅ Simulates both master-side and test ROM as slave
+
+---
+
+## 🌀 CPOL / CPHA Modes Explained
+
+SPI supports 4 clocking modes based on CPOL and CPHA:
+
+| Mode | CPOL | CPHA | Description                       |
+| ---- | ---- | ---- | --------------------------------- |
+| 0    | 0    | 0    | Idle low, sample on rising edge   |
+| 1    | 0    | 1    | Idle low, sample on falling edge  |
+| 2    | 1    | 0    | Idle high, sample on falling edge |
+| 3    | 1    | 1    | Idle high, sample on rising edge  |
+
+Mode selection is configurable via `m_addr[1:0]` bits from APB.
+
+---
+
+## 🎬 Simulation Animation (Conceptual)
+
+```
+[APB WRITE] ---> [SPI Controller FSM] ---> [MOSI] ---> [Slave]
+                                  ^             |
+                                  |             v
+                            [READ MISO] <-------+
+```
+
+### Example: Master sends `0xA5`, receives `0x5A`
+
+```
+MOSI: 10100101  ->
+MISO: <- 01011010
+```
+
+---
+
+## 🔍 Output Example
+
+```
+MOSI: 0xA5
+MISO: 0x5A
+PRDATA: 0x5A (captured by APB)
+```
+
+---
+
+## 📁 Directory Structure
+
+```
+/spi_top.v
+/spi_master.v
+/SPI_Controller.v
+/APB_Slave.v
+/clkdiv.v
+/spi_rom.v
+/readme.md  <-- you are here
+```
+
+---
+
+## 🧪 Test Ideas
+
+- [ ] Loopback testing by connecting MOSI to MISO
+- [ ] ROM response testing with known byte patterns
+- [ ] Baud rate sweep simulation
+
+## 🎥 SPI Protocol Demo Videos
+
+<table>
+  <tr>
+    <td><b>🔰 Introduction</b></td>
+    <td><b>📖 Read Operation</b></td>
+    <td><b>✍️ Write Operation</b></td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://1drv.ms/v/s!An_wDAIxFSnErC-NKmMsYHEP8d7s" target="_blank">
+        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" width="220px" alt="Intro Video" />
+      </a>
+    </td>
+    <td>
+      <a href="https://1drv.ms/v/s!An_wDAIxFSnErC6mHV7AN0Iom1q0" target="_blank">
+        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" width="220px" alt="Read Video" />
+      </a>
+    </td>
+    <td>
+      <a href="https://1drv.ms/v/s!An_wDAIxFSnErDDa2JN0CMva-oFM" target="_blank">
+        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" width="220px" alt="Write Video" />
+      </a>
+    </td>
+  </tr>
+</table>
