@@ -19,7 +19,7 @@ module spi_top #(parameter data=8, address=3)(
 
     // Internal wires
     wire clk;
-    wire SPE, MSTR, ctrl_control, master_control;
+    wire SPE, spe, MSTR, ctrl_control, master_control;
     wire master_wr_rd, TXC, SPTEF, SPTIE, SPISWAI;
     wire [data-1:0] reg_wdata, reg_rdata, m_wdata, m_rdata;
     wire [address-1:0] reg_addr, m_addr;
