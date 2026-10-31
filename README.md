@@ -1,8 +1,9 @@
 # SPI Real-World Protocol Interface
 
-## 📦 Project Overview
+# SPI Master Interface
 
-This project implements a **Verilog-based SPI Master Interface** designed to work in real-world embedded systems with baud rate configuration, CPOL/CPHA control, and APB compatibility.
+This project implements a Verilog SPI master with a small APB register bridge,
+programmable clock division, and full-duplex MOSI/MISO signals.
 
 It consists of the following modules:
 
@@ -107,11 +108,25 @@ PRDATA: 0x5A (captured by APB)
 
 ---
 
-## 🧪 Test Ideas
+## Verification
 
-- [ ] Loopback testing by connecting MOSI to MISO
-- [ ] ROM response testing with known byte patterns
-- [ ] Baud rate sweep simulation
+```sh
+make test
+```
+
+The current self-checking smoke test validates reset and top-level signal
+elaboration. Loopback, CPOL/CPHA, and baud-rate coverage remain follow-up
+tests.
+
+## Structure
+
+- `spi_top.v` integrates the APB bridge, controller, master, and clock divider.
+- `APB_Slave.v` maps APB transactions to SPI control/data registers.
+- `spi_control.v` sequences controller state.
+- `spi_master.v` shifts SPI data.
+- `clkdiv.v` generates the SPI clock.
+- `spi_top_tb.v` is the top-level simulation testbench.
+- `docs/ARCHITECTURE.md` and `docs/MODERNIZATION.md` document design and audit.
 
 ## 🎥 SPI Protocol Demo Videos
 
