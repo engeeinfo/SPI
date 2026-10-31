@@ -1,6 +1,6 @@
 # SPI Real-World Protocol Interface
 
-## 📦 Project Overview
+## Project Overview
 
 This project implements a **Verilog-based SPI Master Interface** designed to work in real-world embedded systems with baud rate configuration, CPOL/CPHA control, and APB compatibility.
 
@@ -65,7 +65,7 @@ Mode selection is configurable via `m_addr[1:0]` bits from APB.
 
 ---
 
-## 🎬 Simulation Animation (Conceptual)
+## Simulation Flow (Conceptual)
 
 ```
 [APB WRITE] ---> [SPI Controller FSM] ---> [MOSI] ---> [Slave]
@@ -113,29 +113,15 @@ PRDATA: 0x5A (captured by APB)
 - [ ] ROM response testing with known byte patterns
 - [ ] Baud rate sweep simulation
 
-## 🎥 SPI Protocol Demo Videos
+## Simulation
 
-<table>
-  <tr>
-    <td><b>🔰 Introduction</b></td>
-    <td><b>📖 Read Operation</b></td>
-    <td><b>✍️ Write Operation</b></td>
-  </tr>
-  <tr>
-    <td>
-      <a href="https://1drv.ms/v/s!An_wDAIxFSnErC-NKmMsYHEP8d7s" target="_blank">
-        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" width="220px" alt="Intro Video" />
-      </a>
-    </td>
-    <td>
-      <a href="https://1drv.ms/v/s!An_wDAIxFSnErC6mHV7AN0Iom1q0" target="_blank">
-        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" width="220px" alt="Read Video" />
-      </a>
-    </td>
-    <td>
-      <a href="https://1drv.ms/v/s!An_wDAIxFSnErDDa2JN0CMva-oFM" target="_blank">
-        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" width="220px" alt="Write Video" />
-      </a>
-    </td>
-  </tr>
-</table>
+The repository includes `spi_top_tb.v`. Run it with the simulator used by your
+target flow; Icarus Verilog can be used for a quick smoke test:
+
+```bash
+iverilog -o spi_top_tb spi_top.v spi_master.v spi_control.v APB_Slave.v clkdiv.v spi_top_tb.v
+vvp spi_top_tb
+```
+
+If your checkout uses a different controller filename, include the matching
+controller source listed by `ls *.v`.
